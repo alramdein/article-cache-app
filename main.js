@@ -1,4 +1,5 @@
 require('dotenv').config()
+const bodyParser = require('body-parser');
 const express = require('express')
 
 const { articleRoutes } = require('./routes/article.route');
@@ -8,8 +9,8 @@ const port = process.env.PORT
 
 const app = express()
 
-express.urlencoded({ extended: true })
-express.json()
+app.use(express.urlencoded({ extended: false })) 
+app.use(express.json())
 
 app.get('/', async (req, res) => {
   res.send('Welcome to article-cache Web Service!')
