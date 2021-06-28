@@ -1,21 +1,22 @@
 require('dotenv').config()
 const express = require('express')
-const app = express()
 
-const db = require("./helpers/db.helper")
+const { articleRoutes } = require('./routes/article.route');
 
 const host = process.env.HOST
 const port = process.env.PORT
 
+const app = express()
+
+express.urlencoded({ extended: true })
+express.json()
+
 app.get('/', async (req, res) => {
-  // res.send('Welcome to article-cache Web Service!')
-  qres = await db.pgPool("SELECT * FROM articles", [])
-  res.send(qres)
+  res.send('Welcome to article-cache Web Service!')
 })
 
-
-
-
+// Other routes
+articleRoutes(app)
 
 app.listen(port, () => {
   console.log(`Example app listening at ${host}:${port}`)

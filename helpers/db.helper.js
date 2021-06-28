@@ -5,7 +5,6 @@ const db = {}
 // query = SQL query
 // params = array of param value
 db.pgPool = (query, params) => {
-
     return new Promise((resolve, reject) => {
         config.pool
             .connect()
@@ -14,7 +13,11 @@ db.pgPool = (query, params) => {
                     .query(query, params)
                     .then(res => {
                         client.release()
-                        resolve(res.rows)
+                        qres = {
+                            count: res.rowCount,
+                            data: res.rows,
+                        }
+                        resolve(qres)
                     })
                     .catch(err => {
                         client.release()
