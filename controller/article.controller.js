@@ -1,3 +1,5 @@
+const NodeCache = require("node-cache")
+const cache = new NodeCache 
 const db = require("../helpers/db.helper")
 const v = require("../helpers/validation.helper")
 
@@ -5,8 +7,24 @@ articleController = {}
 
 articleController.getAllArticle = async (req, res) => {
     try {
-        const query = req.query.query
-        const author = req.query.author
+        let query = req.query.query
+        let author = req.query.author
+
+        query = query.toLowerCase()
+        author = author.toLowerCase()
+
+        const key = query+'&'+author
+        if(cache.has(key)) {
+            console.log("get data from cache")
+            qres = cache.get(key)
+            fres = {
+                success: 1,
+                count: qres.count,
+                data: qres.data
+            }
+            res.send(fres)
+            return
+        }
     
         qres = await db.pgPool("SELECT * FROM articles "+
                   "WHERE (($1::varchar IS NULL OR $1 = '')"+
@@ -16,13 +34,14 @@ articleController.getAllArticle = async (req, res) => {
                   "OR author ILIKE '%' || $2 || '%')"+
                   "ORDER BY createdat DESC",
                   [query, author])
-        
+                  
+        ttl = 18000 // 5 hours
+        cache.set(key, qres, ttl)
         fres = {
             success: 1,
             count: qres.count,
             data: qres.data
         }
-
         res.send(fres)
     } catch(err) {
         console.error(err);

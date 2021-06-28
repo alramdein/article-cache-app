@@ -13,12 +13,12 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 
 app.get('/', async (req, res) => {
-  res.send('Welcome to article-cache Web Service!')
+  res.send('Welcome to article-cache Web Service by Alif Ramdani!')
 })
 
 // Other routes
 articleRoutes(app)
 
 app.listen(port, () => {
-  console.log(`Example app listening at ${host}:${port}`)
+  console.log(`Server listening at ${host}:${port}`)
 })
